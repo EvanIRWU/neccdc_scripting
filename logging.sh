@@ -33,7 +33,7 @@ else
 fi
 while [ 1 ]
 do
-	sleep 5
+	sleep 20
 	# If the auth outputs something, then we know someone got into
 	# SSH. We can view it now.
 	#echo -e "${bold}SSH Suspicious Activity:${reset}"
@@ -41,6 +41,7 @@ do
 	#zenity --notification --text "System update necessary!"
 	# auth.log is for Debain/Ubuntu
 	if [[ "$(cat /proc/version)" = *"Debain"* ]] || [[ "$(cat /proc/version)" = *"Ubuntu"* ]]; then
+		
 		rm /etc/script_logs/recent_log.log
 		cp /var/log/auth.log /etc/script_logs/recent_log.log
 		sudo truncate -s 0 /var/log/auth.log
