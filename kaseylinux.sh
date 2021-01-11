@@ -52,7 +52,7 @@ if [[ $1 == "--backup" ]]; then
 	cp /etc/services /$bud/svs
 fi	
 
-if [[ $1 == "-suids" ]]; then
+if [[ $1 == "--suids" ]]; then
 	echo "suids"
 	echo
 	find / -perm -4000
@@ -62,7 +62,7 @@ if [[ $1 == "-suids" ]]; then
 #GTFOBins
 fi
 
-if [[ $1 == "-ss" ]]; then
+if [[ $1 == "--ss" ]]; then
 	if [[ $2 == "-l" ]]; then
 		ss -plunt
 	fi
@@ -71,7 +71,7 @@ if [[ $1 == "-ss" ]]; then
 	fi
 fi
 
-if [[ $1 == "-update" ]]; then
+if [[ $1 == "--update" ]]; then
 	if [[ $2 == "-d" ]]; then
 		apt update
 		apt upgrade
@@ -80,6 +80,32 @@ if [[ $1 == "-update" ]]; then
 	if [[ $2 == "-rh" ]]; then
 		yum update
 	fi #https://access.redhat.com/sites/default/files/attachments/rh_yum_cheatsheet_1214_jcs_print-1.pdf
+fi
+
+function log() {
+ 	#if [[test -f "/home$1" ]]; then
+	#	rm -rf "/home$1"
+	#fi
+	ls -R $1 | awk '
+	/:$/&&f{s=$0;f=0}
+	/:$/&&!f{sub(/:$/,"");s=$0;f=1;next}
+	NF&&f{ print s"/"$0 }' | sudo xargs md5sum | grep -v "director" > /home$1"`date +"%d-%m-%Y-%H-%M-%S"`"
+}
+
+
+if [[ $1 == "--sums" ]]; then
+	log "/etc/rc.local"
+	log "/etc/rc.d"
+	log "/etc/init.d"
+	log "/etc/cron*"
+	log "/user/cron"
+	log "/etc/profile*"
+	log "/home/*/.bashrc"
+	log "/home/*/bash_logout"
+fi
+
+if [[ $1 == "--sumdiff" ]] 
+	
 fi
 
 
