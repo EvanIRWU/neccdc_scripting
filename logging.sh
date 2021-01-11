@@ -26,8 +26,15 @@ else
 
 	mkdir /etc/script_logs
 
-	cp /var/log/auth.log /etc/script_logs/master_log.log
-	cp /var/log/auth.log /etc/script_logs/recent_log.log
+	if [[ "$(cat /proc/version)" = *"Debain"* ]] || [[ "$(cat /proc/version)" = *"Ubuntu"* ]]; then
+		cp /var/log/auth.log /etc/script_logs/master_log.log
+		cp /var/log/auth.log /etc/script_logs/recent_log.log
+	fi
+
+	if [[ "$(cat /proc/version)" = *"Red Hat"* ]]; then
+		cp /var/log/secure /etc/script_logs/master_log.log
+		cp /var/log/secure /etc/script_logs/recent_log.log
+	fi
 
 	echo -e "${green}[${red}*${green}]${reset} Directory Successfully Created! Two new files have been added!"
 fi
@@ -68,17 +75,29 @@ do
 
 	# /var/log/secure is for Red Hat/CentOS/Fedora
 	if [[ "$(cat /proc/version)" = *"Red Hat"* ]]; then
-		if [[ "$(cat /var/log/secure)" = *"Accepted password for"* ]] || [[ "$(cat /var/log/secure)" = *"Failed password for"* ]]; then
+		
+
+		rm /etc/script_logs/recent_log.log
+		cp /var/log/auth.log /etc/script_logs/recent_log.log
+		sudo truncate -s 0 /var/log/secure
+		cat /etc/script_logs/recent_log.log >> /etc/script_logs/master_log.log
+		if [[ "$(cat /etc/script_logs/recent_log.log | grep "Accepted")" = *"Accepted password for"* ]] || [[ "$(cat /etc/script_logs/recent_log.log | grep "Failed password for")" = *"Failed password for"* ]] || [[ "$(cat /var/log/auth.log | grep "sshd")" = *"sshd"* ]]; then
 			echo -e "${yellow}${bold}SSH INFORMATION:${reset}"
 		
-		fi
-		if [[ "$acceptauthredhat" == *"Accepted password for"* ]]; then
-			echo -e "   ${green}${bold}SUCCESSFUL LOGIN:${reset}"
-			echo -e "      ${red}${acceptauthredhat}${reset}"
-		fi
-		if [[ "$failedauthredhat" == *"Failed password for"* ]]; then
-			echo -e "   ${green}${bold}FAILED LOGIN:${reset}"
-			echo -e "      ${red}${failedauthredhat}${reset}"
+		
+			if [[ "$(cat /etc/script_logs/recent_log.log | grep "Accepted")" == *"Accepted password for"* ]]; then
+				echo -e "   ${green}${bold}SUCCESSFUL LOGIN:${reset}"
+				echo -e "    ${blue}USERNAME: ${red}$(cat /etc/script_logs/recent_log.log | grep "Accepted" | awk '{print $9}')"
+				echo -e "    ${blue}IP ADDRESS: ${red}$(cat /etc/script_logs/recent_log.log | grep "Accepted" | awk '{print $11}')"
+				echo -e "    ${blue}PORT: ${red}$(cat /etc/script_logs/recent_log.log | grep "Accepted" | awk '{print $13}') ${reset}"
+				#echo -e "      ${red}${acceptauth}${reset}"
+			fi
+			if [[ "$(cat /etc/script_logs/recent_log.log | grep "Failed")" == *"Failed password for"* ]]; then
+				echo -e "   ${green}${bold}FAILED LOGIN:${reset}"
+				echo -e "    ${blue}USERNAME: ${red}$(cat /etc/script_logs/recent_log.log | grep "Failed" | awk '{print $9}')"
+				echo -e "    ${blue}IP ADDRESS: ${red}$(cat /etc/script_logs/recent_log.log | grep "Failed" | awk '{print $11}')"
+				echo -e "    ${blue}PORT: ${red}$(cat /etc/script_logs/recent_log.log | grep "Failed" | awk '{print $13}') ${reset}"
+			fi
 		fi
 	fi
 
