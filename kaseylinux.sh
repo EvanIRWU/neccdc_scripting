@@ -30,8 +30,6 @@ while [[ $# -ne 0 ]]; do
 
 		;;
 
-	\
-		\
 		"--illegal-users")
 		echo "
 -------------------------------------------------
@@ -95,6 +93,7 @@ while [[ $# -ne 0 ]]; do
 			detailed services ON
 			"
 			service --status-all | grep [+] | awk '{print $4}' | xargs systemctl status
+			shift
 		else
 			#simple view
 			echo "
@@ -102,7 +101,6 @@ while [[ $# -ne 0 ]]; do
 			"
 			service --status-all | grep [+]
 		fi
-		shift
 		shift
 
 		;;
@@ -119,6 +117,7 @@ while [[ $# -ne 0 ]]; do
 			detailed services OFF
 			"
 			service --status-all | grep [-] | awk '{print $4}' | xargs systemctl status
+			shift
 		else
 			#simple view
 			echo "
@@ -126,7 +125,6 @@ while [[ $# -ne 0 ]]; do
 			"
 			service --status-all | grep [-]
 		fi
-		shift
 		shift
 
 		;;
@@ -145,7 +143,7 @@ while [[ $# -ne 0 ]]; do
 		cp /etc/shadow $bud/sdw
 		cp /etc/group $bud/grp
 		cp /etc/gshadow $bud/gsdw
-		cp /etc/ssh $bud/ssh
+		cp -r /etc/ssh $bud/ssh
 		cp /etc/hosts $bud/hosts
 		cp -r /etc/cron* $bud/
 		cp /etc/services /$bud/svs
@@ -182,14 +180,15 @@ while [[ $# -ne 0 ]]; do
 			plunt
 			"
 			ss -plunt
+		shift
 		fi
 		if [[ $2 == "-e" ]]; then
 			echo "
 			peunt
 			"
 			ss -peunt
-		fi
 		shift
+		fi
 		shift
 
 		;;
@@ -207,14 +206,15 @@ while [[ $# -ne 0 ]]; do
 			apt update
 			apt upgrade
 			apt autoremove
+		shift
 		fi
 		if [[ $2 == "-rh" ]]; then
 			echo "
 			red hat
 			"
 			yum update
-		fi #https://access.redhat.com/sites/default/files/attachments/rh_yum_cheatsheet_1214_jcs_print-1.pdf
 		shift
+		fi #https://access.redhat.com/sites/default/files/attachments/rh_yum_cheatsheet_1214_jcs_print-1.pdf
 		shift
 
 		;;
