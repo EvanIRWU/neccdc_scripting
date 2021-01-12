@@ -181,7 +181,7 @@ while [[ $# -ne 0 ]]; do
 			"
 			ss -plunt
 		shift
-		else if [[ $2 == "-e" ]]; then
+		elif [[ $2 == "-e" ]]; then
 			echo "
 			peunt
 			"
