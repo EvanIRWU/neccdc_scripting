@@ -230,10 +230,10 @@ while [[ $# -ne 0 ]]; do
 		echo "
 		any authorized_keys out there? (/root/ /etc/ /dev/) + (/.ssh/) (maybe /dev/.ssh)
 		"
-		sudo apt install locate -y
+		sudo apt install locate -y &
 		locate authorized_keys
 		echo "
-		is it set in the config?
+		is it set in the config? (Authorized Keys File = NO please)
 		"
 		cat /etc/ssh/sshd_config | grep uthorized
 		echo "
