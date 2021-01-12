@@ -137,11 +137,11 @@ while [[ $# -ne 0 ]]; do
 		echo "
 		PRINTING SUIDS
 		"
-		find / -perm -4000 | grep -v "find:"
+		find / -perm -4000 | grep -v "find:" | xargs ls -lah
 		echo "
 		PRINTING GUIDS
 		"
-		find / -perm -2000 | grep -v "find:"
+		find / -perm -2000 | grep -v "find:" | xargs ls -lah
 		shift
 	#GTFOBins
 	fi
@@ -182,10 +182,11 @@ while [[ $# -ne 0 ]]; do
 	fi
 
 	function log() {
-		ls -R $1 | awk '
+		pth=$1
+		ls -R $pth | awk '
 		/:$/&&f{s=$0;f=0}
 		/:$/&&!f{sub(/:$/,"");s=$0;f=1;next}
-		NF&&f{ print s"/"$0 }' | sudo xargs md5sum | grep -v "director" > /home$1"$(date +"%d-%m-%Y-%H-%M-%S")"
+		NF&&f{ print s"/"$0 }' | sudo xargs md5sum | grep -v "director" > /home$pth"$(date +"%d-%m-%Y-%H-%M-%S")"
 	}
 
 	if [[ $1 == "--sums" ]]; then
