@@ -254,6 +254,7 @@ while [[ $# -ne 0 ]]; do
 		ssh configs PermitRootLogin to NO and PasswordAuthentication to YES
 		"
 		cat /etc/ssh/sshd_config | grep -E "ermit"
+		shift
 	;;
 
 	esac
