@@ -22,6 +22,7 @@ while [[ $# -ne 0 ]]; do
 
 		-illegal-users -userlist -purge-ssh --services-running -d --services-off -d --backup --suids --ss -p ss -l --update -d --sums
 		"
+		shift
 	fi
 
 	if [[ $1 == "-illegal-users" ]]; then
