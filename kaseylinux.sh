@@ -206,4 +206,6 @@ while [[ $# -ne 0 ]]; do
 		shift
 	;;
 
+	esac
+
 done
