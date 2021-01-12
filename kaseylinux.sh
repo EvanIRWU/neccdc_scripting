@@ -24,7 +24,7 @@ while [[ $# -ne 0 ]]; do
 		--sums						#makes sums of directories that may or may not have reason to change
 		--sumdiff					#hopefully will implement some way to compare and understand diff
 
-		sudo ./kaseylinux.sh --illegal-users --userlist --purge-ssh --services-running --services-off --backup --suids --ss -p --ss -l --update -d --pcheck
+		sudo ./kaseylinux.sh --illegal-users --userlist --purge-ssh --services-running --services-off --backup --suids --ss -e --ss -l --update -d --pcheck
 		"
 		shift
 
