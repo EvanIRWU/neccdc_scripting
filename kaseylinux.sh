@@ -186,7 +186,7 @@ while [[ $# -ne 0 ]]; do
 		ls -R $pth | awk '
 		/:$/&&f{s=$0;f=0}
 		/:$/&&!f{sub(/:$/,"");s=$0;f=1;next}
-		NF&&f{ print s"/"$0 }' | sudo xargs md5sum | grep -v "director" > /home$pth"$(date +"%d-%m-%Y-%H-%M-%S")"
+		NF&&f{ print s"/"$0 }' | sudo xargs md5sum | grep -v "director" > /tmp/hashes$pth"$(date +"%d-%m-%Y-%H-%M-%S")"
 	}
 
 	if [[ $1 == "--sums" ]]; then
