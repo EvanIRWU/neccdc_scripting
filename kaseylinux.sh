@@ -186,7 +186,7 @@ while [[ $# -ne 0 ]]; do
 		shift
 
 	;;
-	*)
+	""|*)
 			echo " NO ARGUMENTS SUPPLIED
 -------------------------------------------------
 		-illegal-users				#users under 1000 with /bin/ in the logon shell field
