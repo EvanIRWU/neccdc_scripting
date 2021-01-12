@@ -6,7 +6,8 @@
 
 while [[ $# -ne 0 ]]; do
 
-	if [[ $1 == "-h" ]]; then
+	case $1 in
+	"-h")
 		echo "
 -------------------------------------------------
 		-illegal-users				#users under 1000 with /bin/ in the logon shell field
@@ -24,9 +25,12 @@ while [[ $# -ne 0 ]]; do
 		sudo ./kaseylinux.sh -illegal-users -userlist -purge-ssh --services-running --services-off --backup --suids --ss -p --ss -l --update -d --sums
 		"
 		shift
-	fi
 
-	if [[ $1 == "-illegal-users" ]]; then
+	;;
+
+
+
+	"--illegal-users")
 		echo "
 -------------------------------------------------
 		users with 999 or below, containing /bin/ in their shell path
@@ -44,9 +48,11 @@ while [[ $# -ne 0 ]]; do
 		"
 		cat /etc/sudoers | grep ALL
 		shift
-	fi
 
-	if [[ $1 == "-userlist" ]]; then
+	;;
+
+	"--userlist")
+
 		echo "
 -------------------------------------------------
 		users with 1000 or above
@@ -57,9 +63,9 @@ while [[ $# -ne 0 ]]; do
 		cat /etc/passwd | awk -F: '{if ($3 > 999) print $0;}'
 		users=$(cat /etc/passwd | awk -F: '{if ($3 > 999) print $0;}')
 		shift
-	fi
+	;;
+	"--purge-ssh")
 
-	if [[ $1 == "-purge-ssh" ]]; then
 		echo "
 -------------------------------------------------
 		/home/<user>/.ssh/id_rsa is where pre-authenticated users will store their keys
@@ -73,9 +79,8 @@ while [[ $# -ne 0 ]]; do
 		"
 		cat /etc/ssh/sshd_config | grep authorized_keys
 		shift
-	fi
-
-	if [[ $1 == "--services-running" ]]; then
+	;;
+	"--services-running")
 		echo '
 -------------------------------------------------
 		I like detailed, but thats not necessary
@@ -91,9 +96,9 @@ while [[ $# -ne 0 ]]; do
 		fi
 		shift
 		shift
-	fi
 
-	if [[ $1 == "--services-off" ]]; then
+	;;
+	"--services-off")
 		echo '
 -------------------------------------------------
 		I like detailed, but thats not necessary
@@ -109,9 +114,9 @@ while [[ $# -ne 0 ]]; do
 		fi
 		shift
 		shift
-	fi
 
-	if [[ $1 == "--backup" ]]; then
+	;;
+	"--backup")
 		echo "
 -------------------------------------------------
 		backing up important directories
@@ -128,9 +133,9 @@ while [[ $# -ne 0 ]]; do
 		cp -r /etc/cron* $bud/
 		cp /etc/services /$bud/svs
 		shift
-	fi
 
-	if [[ $1 == "--suids" ]]; then
+	;;
+	"--suids")
 		echo "
 -------------------------------------------------
 		SUIDs and GUIDs have the potential for priv esc, so compare these with GTFOBins"
@@ -144,9 +149,9 @@ while [[ $# -ne 0 ]]; do
 		find / -perm -2000 | grep -v "find:" | xargs ls -lah
 		shift
 	#GTFOBins
-	fi
 
-	if [[ $1 == "--ss" ]]; then
+	;;
+	"--ss")
 		echo "
 -------------------------------------------------
 		all connections in and out
@@ -160,9 +165,9 @@ while [[ $# -ne 0 ]]; do
 		fi
 		shift
 		shift
-	fi
 
-	if [[ $1 == "--update" ]]; then
+	;;
+	"--update")
 		echo "
 -------------------------------------------------
 		apt and yum are the updaters on each system
@@ -179,35 +184,26 @@ while [[ $# -ne 0 ]]; do
 		fi #https://access.redhat.com/sites/default/files/attachments/rh_yum_cheatsheet_1214_jcs_print-1.pdf
 		shift
 		shift
-	fi
 
-	function log() {
-		pth=$1
-		ls -R $pth | awk '
-		/:$/&&f{s=$0;f=0}
-		/:$/&&!f{sub(/:$/,"");s=$0;f=1;next}
-		NF&&f{ print s"/"$0 }' | sudo xargs md5sum | grep -v "director" > /tmp/hashes$pth"$(date +"%d-%m-%Y-%H-%M-%S")"
-	}
-
-	if [[ $1 == "--sums" ]]; then
-		echo "
+	;;
+	*)
+			echo " NO ARGUMENTS SUPPLIED
 -------------------------------------------------
-		thank god for people who understand awk to a great extent. Trying to hash and diff all of this
+		-illegal-users				#users under 1000 with /bin/ in the logon shell field
+		-userlist					#users on the box with uid's 1000 and over
+		-purge-ssh					#kills all .ssh keys
+		--services-running	[-d]	#prints all services running, detailed shows systemctl status
+		--services-off	[-d]	#prints all services not running, detailed shows systemctl status
+		--backup					#backs up directories of interest
+		--suids						#prints suid and guid bit files, contrast with GTFOBins
+		--ss	[-p] [-l]			#plunt or peunt for listening or established ports
+		--update	[-d] [-rh]		#debian or redhat update (sources.list or repos.list check em)
+		--sums						#makes sums of directories that may or may not have reason to change
+		--sumdiff					#hopefully will implement some way to compare and understand diff
+
+		sudo ./kaseylinux.sh -illegal-users -userlist -purge-ssh --services-running --services-off --backup --suids --ss -p --ss -l --update -d --sums
 		"
-		log "/etc/rc.local"
-		log "/etc/rc.d"
-		log "/etc/init.d"
-		log "/etc/cron*"
-		log "/user/cron"
-		log "/etc/profile*"
-		log "/home/*/.bashrc"
-		log "/home/*/bash_logout"
 		shift
-	fi
-
-	if [[ $1 == "--sumdiff" ]]; then
-
-		shift
-	fi
+	;;
 
 done
