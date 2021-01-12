@@ -17,6 +17,8 @@ uline="\e[4m"
 reset="\e[0m"
 
 DIRECTORY=/etc/script_logs
+
+
 echo -e "${green}[${red}*${green}]${reset} System is now being monitored. I will notify you, if I find any suspicious activity."
 if [[ -d "$DIRECTORY" ]]; then
 	echo ""
@@ -40,7 +42,11 @@ else
 fi
 while [ 1 ]
 do
+
+
 	sleep 20
+
+
 	# If the auth outputs something, then we know someone got into
 	# SSH. We can view it now.
 	#echo -e "${bold}SSH Suspicious Activity:${reset}"
@@ -63,12 +69,14 @@ do
 				echo -e "    ${blue}IP ADDRESS: ${red}$(cat /etc/script_logs/recent_log.log | grep "Accepted" | awk '{print $11}')"
 				echo -e "    ${blue}PORT: ${red}$(cat /etc/script_logs/recent_log.log | grep "Accepted" | awk '{print $13}') ${reset}"
 				#echo -e "      ${red}${acceptauth}${reset}"
+				wall "SOMEONE SSH'd!!"
 			fi
 			if [[ "$(cat /etc/script_logs/recent_log.log | grep "Failed")" == *"Failed password for"* ]]; then
 				echo -e "   ${green}${bold}FAILED LOGIN:${reset}"
 				echo -e "    ${blue}USERNAME: ${red}$(cat /etc/script_logs/recent_log.log | grep "Failed" | awk '{print $9}')"
 				echo -e "    ${blue}IP ADDRESS: ${red}$(cat /etc/script_logs/recent_log.log | grep "Failed" | awk '{print $11}')"
 				echo -e "    ${blue}PORT: ${red}$(cat /etc/script_logs/recent_log.log | grep "Failed" | awk '{print $13}') ${reset}"
+				wall "SOMEONE FAILED TO SSH!!"
 			fi
 		fi
 	fi
@@ -78,7 +86,7 @@ do
 		
 
 		rm /etc/script_logs/recent_log.log
-		cp /var/log/auth.log /etc/script_logs/recent_log.log
+		cp /var/log/secure /etc/script_logs/recent_log.log
 		sudo truncate -s 0 /var/log/secure
 		cat /etc/script_logs/recent_log.log >> /etc/script_logs/master_log.log
 		if [[ "$(cat /etc/script_logs/recent_log.log | grep "Accepted")" = *"Accepted password for"* ]] || [[ "$(cat /etc/script_logs/recent_log.log | grep "Failed password for")" = *"Failed password for"* ]] || [[ "$(cat /var/log/auth.log | grep "sshd")" = *"sshd"* ]]; then
@@ -91,12 +99,14 @@ do
 				echo -e "    ${blue}IP ADDRESS: ${red}$(cat /etc/script_logs/recent_log.log | grep "Accepted" | awk '{print $11}')"
 				echo -e "    ${blue}PORT: ${red}$(cat /etc/script_logs/recent_log.log | grep "Accepted" | awk '{print $13}') ${reset}"
 				#echo -e "      ${red}${acceptauth}${reset}"
+				wall "SOMEONE SSH'd!!"
 			fi
 			if [[ "$(cat /etc/script_logs/recent_log.log | grep "Failed")" == *"Failed password for"* ]]; then
 				echo -e "   ${green}${bold}FAILED LOGIN:${reset}"
 				echo -e "    ${blue}USERNAME: ${red}$(cat /etc/script_logs/recent_log.log | grep "Failed" | awk '{print $9}')"
 				echo -e "    ${blue}IP ADDRESS: ${red}$(cat /etc/script_logs/recent_log.log | grep "Failed" | awk '{print $11}')"
 				echo -e "    ${blue}PORT: ${red}$(cat /etc/script_logs/recent_log.log | grep "Failed" | awk '{print $13}') ${reset}"
+				wall "SOMEONE FAILED TO SSH!!"
 			fi
 		fi
 	fi
