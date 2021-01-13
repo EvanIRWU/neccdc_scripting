@@ -12,9 +12,11 @@ while [[ $# -ne 0 ]]; do
 		"-h")
 		echo "
 -------------------------------------------------
-		-illegal-users				#users under 1000 with /bin/ in the logon shell field
-		-userlist					#users on the box with uid's 1000 and over
-		-purge-ssh					#kills all .ssh keys
+		--illegal-users				#users under 1000 with /bin/ in the logon shell field
+		--userlist					#users on the box with uid's 1000 and over
+		--passsdw					#compares /etc/passwd and /etc/shadow for discrepancies as far as the first field goes
+		--passwords					#sets new passwords for all users with IDs over 999
+		--purge-ssh					#kills all .ssh keys
 		--services-running	[-d]	#prints all services running, detailed shows systemctl status
 		--services-off	[-d]	#prints all services not running, detailed shows systemctl status
 		--backup					#backs up directories of interest
