@@ -9,7 +9,7 @@
 while [[ $# -ne 0 ]]; do
 
 	case $1 in
-	"-h")
+		"-h")
 		echo "
 -------------------------------------------------
 		-illegal-users				#users under 1000 with /bin/ in the logon shell field
@@ -24,10 +24,9 @@ while [[ $# -ne 0 ]]; do
 		--sums						#makes sums of directories that may or may not have reason to change
 		--sumdiff					#hopefully will implement some way to compare and understand diff
 
-		sudo ./kaseylinux.sh --illegal-users --userlist --purge-ssh --services-running --services-off --backup --suids --ss -e --ss -l --update -d --pcheck
+		sudo ./kaseylinux.sh --illegal-users --passsdw --userlist --purge-ssh --services-running --services-off --backup --suids --ss -e --ss -l --update -d --pcheck
 		"
 		shift
-
 		;;
 
 		"--illegal-users")
@@ -64,6 +63,37 @@ while [[ $# -ne 0 ]]; do
 		users=$(cat /etc/passwd | awk -F: '{if ($3 > 999) print $0;}')
 		shift
 		;;
+
+	"--passsdw")
+
+		echo "
+-------------------------------------------------
+		compare first field of passwd with shadow
+		these should never not match
+		"
+		cat /etc/passwd | cut -d : -f1 > passwdlist.txt
+		cat /etc/shadow | cut -d : -f1 > shadowlist.txt
+		diff passwdlist.txt shadowlist.txt
+		shift
+		;;
+
+	"--passwords")
+
+		echo "
+-------------------------------------------------
+		Changing passwords for all users with UIDs over 1000
+		"
+		read -p "What's the new password?" pwd
+		for User in `cat /etc/passwd | awk -F: '{if ($3 > 999) print $1;}'`
+		do
+			echo $User is having their password changed
+			echo $User':$pwd' | chpasswd
+			
+		done
+		shift
+		;;
+		
+
 	"--purge-ssh")
 
 		echo "
@@ -80,6 +110,7 @@ while [[ $# -ne 0 ]]; do
 		cat /etc/ssh/sshd_config | grep authorized_keys
 		shift
 		;;
+
 	"--services-running")
 		echo '
 -------------------------------------------------
