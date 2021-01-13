@@ -4,7 +4,7 @@
 #I know this isn't prime. It's actually quite terrible, and I want it to be much better.
 #https://github.com/ucrcyber/CCDC ?
 #cron
-###Kasey Litchford - 01/11/2021
+###Kasey Litchford - 01/11/2021 for NDCCDC Quals
 
 while [[ $# -ne 0 ]]; do
 

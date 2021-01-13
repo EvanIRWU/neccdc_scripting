@@ -1,6 +1,7 @@
 rem Hi I'm Kasey and this is my batch script for some simple stuff because if I'm 
 rem going to learn how to script in linux I might as well make a terrible attempt
 rem in Windows as well
+rem Kasey Litchford - 01/12/2021 for NECCDC Quals
 
 echo "Are you running as Admin?"
 net sessions
