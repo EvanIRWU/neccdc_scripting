@@ -24,7 +24,7 @@ while [[ $# -ne 0 ]]; do
 		--sums						#makes sums of directories that may or may not have reason to change
 		--sumdiff					#hopefully will implement some way to compare and understand diff
 
-		sudo ./kaseylinux.sh --illegal-users --passsdw --userlist --purge-ssh --services-running --services-off --backup --suids --ss -e --ss -l --update -d --pcheck
+		sudo ./kaseylinux.sh --illegal-users --passsdw --passwords --userlist --purge-ssh --services-running --services-off --backup --suids --ss -e --ss -l --update -d --pcheck
 		"
 		shift
 		;;
@@ -73,7 +73,9 @@ while [[ $# -ne 0 ]]; do
 		"
 		cat /etc/passwd | cut -d : -f1 > passwdlist.txt
 		cat /etc/shadow | cut -d : -f1 > shadowlist.txt
+		echo "running diff"
 		diff passwdlist.txt shadowlist.txt
+		echo "diff ran"
 		shift
 		;;
 
@@ -83,12 +85,11 @@ while [[ $# -ne 0 ]]; do
 -------------------------------------------------
 		Changing passwords for all users with UIDs over 1000
 		"
-		read -p "What's the new password?" pwd
+		read -p -s "What's the new password?" pwd
 		for User in `cat /etc/passwd | awk -F: '{if ($3 > 999) print $1;}'`
 		do
 			echo $User is having their password changed
 			echo $User':$pwd' | chpasswd
-			
 		done
 		shift
 		;;
